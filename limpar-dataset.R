@@ -15,7 +15,9 @@ nrow(data)
 #fim remover linhas NAs
 
 #converte data formatada para date
-data$Data_Sorteio<- as.Date(data$Data_Sorteio, format='%d/%m/%Y')
+data<- data %>% separate(col='Data_Sorteio', into=c('Dia_Sorteio','Mes_Sorteio','Ano_Sorteio', sep='/'))
+data<-data[,-5]
+#data$Data_Sorteio<- as.Date(data$Data_Sorteio, format='%d/%m/%Y')
 #fim converte data formatada para date
 
 #converte moeda formatada para decimal
