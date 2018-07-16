@@ -1,15 +1,22 @@
 #Limpar dataset
+library(tidyr)
+library(dplyr)
+options(digits=15)
+
 data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
 #data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
 
 View(data)
-str(data)
 
 #remover linhas NAs
 posicaoNA<- which(is.na(data))
 data<-data[-posicaoNA,]
 nrow(data)
 #fim remover linhas NAs
+
+#converte data formatada para date
+data$Data_Sorteio<- as.Date(data$Data_Sorteio, format='%d/%m/%Y')
+#fim converte data formatada para date
 
 #converte moeda formatada para decimal
 data$Rateio_Sena<- gsub('[.]', '', data$Rateio_Sena)
@@ -40,3 +47,35 @@ data$Arrecadacao_Total<- gsub('[.]', '', data$Arrecadacao_Total)
 data$Arrecadacao_Total<- sub(',', '', data$Arrecadacao_Total)
 data$Arrecadacao_Total<- as.numeric(data$Arrecadacao_Total)/100
 #fim converte moeda formatada para decimal
+
+#altera valores de SIM e NAO para TRUE e FALSE
+levels(data$Acumulado)<- c(FALSE, TRUE)
+data$Acumulado<- as.logical(data$Acumulado)
+#fim altera valores de SIM e NAO para TRUE e 
+
+#cria dataset organizada para as dezenas
+g<-select(data,Concurso,X1_Dezena,X2_Dezena,X3_Dezena,X4_Dezena,X5_Dezena,X6_Dezena)
+data.dezenas<-gather(g, key='Ordem_Sorteio', value='Dezena', -Concurso)
+data.dezenas$Ordem_Sorteio<- factor(data.dezenas$Ordem_Sorteio)
+levels(data.dezenas$Ordem_Sorteio)<-c(1,2,3,4,5,6)
+View(data.dezenas)
+
+data<- select(data,-X1_Dezena,-X2_Dezena,-X3_Dezena,-X4_Dezena,-X5_Dezena,-X6_Dezena)
+View(data)
+#fim cria dataset organizada para as dezenas
+
+#TODO cria dataset organizada para os estados ganhadores
+g<-select(data,Concurso,UF)
+g<-filter(g, is.na(g$UF)==FALSE)
+View(g)
+str(g)
+g$UF<-as.character(g$UF)
+separate(g$UF, sep=',', into='UF')
+#fim cria dataset organizada para os estados ganhadores
+
+#grava no arquivo
+getwd()
+write.table(data, 'clean-data.csv', sep=';', row.names=FALSE)
+write.table(data.dezenas, 'clean-data-dezenas.csv', sep=';', row.names=FALSE)
+
+
