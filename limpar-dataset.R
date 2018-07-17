@@ -1,4 +1,6 @@
 #Limpar dataset
+install.packages("dplyr")
+install.packages("tidyr")
 library(tidyr)
 library(dplyr)
 options(digits=15)
@@ -73,11 +75,17 @@ View(g)
 str(g)
 g$UF<-as.character(g$UF)
 separate(g$UF, sep=',', into='UF')
+g<- g %>%
+  transform(UF = strsplit(UF, ",")) %>%
+  unnest(UF)
 #fim cria dataset organizada para os estados ganhadores
+
+
 
 #grava no arquivo
 getwd()
 write.table(data, 'clean-data.csv', sep=';', row.names=FALSE)
 write.table(data.dezenas, 'clean-data-dezenas.csv', sep=';', row.names=FALSE)
+write.table(g, 'clean-data-estados.csv', sep=';', row.names=FALSE)
 
 
