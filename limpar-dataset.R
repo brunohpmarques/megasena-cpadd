@@ -68,7 +68,7 @@ data<- select(data,-X1_Dezena,-X2_Dezena,-X3_Dezena,-X4_Dezena,-X5_Dezena,-X6_De
 View(data)
 #fim cria dataset organizada para as dezenas
 
-#TODO cria dataset organizada para os estados ganhadores
+#cria dataset organizado para os estados ganhadores
 g<-select(data,Concurso,UF)
 g<-filter(g, is.na(g$UF)==FALSE)
 View(g)
@@ -78,9 +78,11 @@ separate(g$UF, sep=',', into='UF')
 g<- g %>%
   transform(UF = strsplit(UF, ",")) %>%
   unnest(UF)
-#fim cria dataset organizada para os estados ganhadores
+#fim cria dataset organizado para os estados ganhadores
 
-
+#TODO criar dataset organizado para as regioes ganhadores
+#
+#fim criar dataset organizado para as regioes ganhadores
 
 #grava no arquivo
 getwd()

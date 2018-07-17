@@ -4,6 +4,7 @@ library(tidyr)
 
 data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\clean-data.csv', sep=';', dec='.', header=T, na.strings='', strip.white=T)
 data.dezenas<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\clean-data-dezenas.csv', sep=';', dec='.', header=T, na.strings='', strip.white=T)
+data.estados<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\clean-data-estados.csv', sep=';', dec='.', header=T, na.strings='', strip.white=T)
 
 View(data)
 
@@ -28,3 +29,8 @@ ganhadoresAno<-group_by(ganhadoresAno, Ganhadores_Sena, Ano_Sorteio)
 ganhadoresAno<-aggregate(Ganhadores_Sena ~ Ano_Sorteio, FUN=sum, data=ganhadoresAno)
 plot(x=ganhadoresAno$Ano_Sorteio, y=ganhadoresAno$Ganhadores_Sena, type='o', pch='$', col='blue', 
      main='Ganhadores por ano', xlab='Ano', ylab='Ganhadores')
+
+#ganhadores por estado
+estados<-data.estados
+estados<-aggregate(Concurso ~ UF, FUN=length, estados)
+barplot(estados$Concurso, main='Ganhadores por estado', ylab='Ganhadores', xlab='UF', names.arg=estados$UF, col=rainbow(26))
