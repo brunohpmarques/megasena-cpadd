@@ -13,11 +13,6 @@ library(rgdal)
 projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/projeto/', sep='')
 #projeto<-paste(getwd(), '...')
 
-#https://rstudio-pubs-static.s3.amazonaws.com/176768_ec7fb4801e3a4772886d61e65885fbdd.html
-par(mar=c(1,1,1,1))
-shape.estados<-readOGR(paste(projeto, "shapes/estados_2010.shp", sep=''))
-plot(shape.estados, main='Ganhadores por Estado', col='white')
-
 #https://plot.ly/r/choropleth-maps/
 #https://www.r-graph-gallery.com/175-choropleth-map-cartography-pkg/
 
@@ -63,5 +58,16 @@ x<-c(sum(!ganhadoresConcurso[TRUE]), sum(ganhadoresConcurso[TRUE]))
 ptc<-paste(round(x/sum(x)*100), '%', sep='')
 pie(x, ptc, main='Ganhadores x Acumulado', col=c('green','blue'))
 legend(x='topleft', legend=classes, fill=c('green','blue'), cex = 0.70)
+
+#https://rstudio-pubs-static.s3.amazonaws.com/176768_ec7fb4801e3a4772886d61e65885fbdd.html
+par(mar=c(1,1,1,1))
+map("world","Brazil")
+shape.estados<-readOGR(paste(projeto, "shapes/estados_2010.shp", sep=''))
+plot(shape.estados, main='Ganhadores por Estado', add=T, col=c('white','black'))
+#map.cities(world.cities, country="Brazil", capitals=1, pch=19, cex=1.2)
+
+names(shape.estados)
+shape.estados$sigla
+levels(estados$UF)<-factor(estados$UF, levels=order(levels(estados$UF)))
 
 
