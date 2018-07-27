@@ -5,8 +5,8 @@ library(tidyr)
 library(dplyr)
 options(digits=15)
 
-data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
-#data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
+#data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
+data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
 
 View(data)
 
@@ -25,7 +25,7 @@ data<-data[,-5]
 #converte moeda formatada para decimal
 data$Rateio_Sena<- gsub('[.]', '', data$Rateio_Sena)
 data$Rateio_Sena<- sub(',', '', data$Rateio_Sena)
-data$Rateio_Sena<- as.numeric(data$Rateio_Sena)/100
+data$Rateio_Sena<- as.numeric(data$Rateio_Sena)
 
 data$Rateio_Quina<- gsub('[.]', '', data$Rateio_Quina)
 data$Rateio_Quina<- sub(',', '', data$Rateio_Quina)
@@ -81,6 +81,13 @@ g<- g %>%
 #fim cria dataset organizado para os estados ganhadores
 
 #TODO criar dataset organizado para as regioes ganhadores
+
+Regioes<-c(rep("Norte",7), rep("Nordeste",9), rep("CentroOeste",4), rep("Sul",3), rep("Sudeste",4))
+UF<-c("AM","RR","AP","PA","TO","RO","AC","AL","BA","CE","MA","PB","PE","PI","RN","SE",
+           "DF","GO","MT","MS","PR","SC","RS","MG","RJ","SP","ES")
+data.regioes<- data.frame(Regioes, UF)
+
+ 
 #
 #fim criar dataset organizado para as regioes ganhadores
 
