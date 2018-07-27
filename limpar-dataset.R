@@ -25,7 +25,7 @@ data<-data[,-5]
 #converte moeda formatada para decimal
 data$Rateio_Sena<- gsub('[.]', '', data$Rateio_Sena)
 data$Rateio_Sena<- sub(',', '', data$Rateio_Sena)
-data$Rateio_Sena<- as.numeric(data$Rateio_Sena)
+data$Rateio_Sena<- as.numeric(data$Rateio_Sena)/100
 
 data$Rateio_Quina<- gsub('[.]', '', data$Rateio_Quina)
 data$Rateio_Quina<- sub(',', '', data$Rateio_Quina)
