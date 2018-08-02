@@ -7,29 +7,22 @@ projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/pro
 #projeto<-paste(getwd(), '...')
 data.estados<-read.csv2(paste(projeto,'clean-data-estados.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 
-ns<- 0.05 
-
-concursoGanhadores<- count(data.estados)
-ganhadoresSP<- count(filter(data.estados, data.estados$UF=="SP"))
-proporcao<- mean(data.estados$UF=="SP")
+media<-0.4
+ns<-0.05
 
 #transformar factor em numeric
-estadosH <- data.estados
+estadosH<-data.estados
 estadosH$UF<-as.character(estadosH$UF)
-estadosH$UF[estadosH$UF=="SP"]<- 1
-estadosH$UF[estadosH$UF!="1"]<-0
-estadosH$UF <- as.numeric(estadosH$UF)
+estadosH$UF[estadosH$UF!="SP"]<-0
+estadosH$UF[estadosH$UF=="SP"]<-1
+estadosH$UF<-as.numeric(estadosH$UF)
 
-# Vetor com a quantidade dos estados de Sp que ganharam a MegaSena
+# Vetor com a quantidade dos estados de SP que ganharam a MegaSena
 x<-aggregate(formula = UF ~ Concurso, FUN = sum, data= estadosH)
 
+Resultado<-t.test(x$UF, alternative = "two.sided", mu= media, conf.level = ns )
 
-# Media 40% (0.4)
-media = 0.38 # verificar essa média
-
-Resultado<- t.test(x$UF, alternative = "two.sided", mu= media, conf.level = ns )
-
-if( Resultado$p.value >= 0.05){
+if(Resultado$p.value >= 0.05){
   print("Hipotese Nula aceita: São Paulo foi o estado que mais ganhou na MegaSena")
 }else{
   print("Hipotese Nula rejeitada: O estado que teve a quantidade maior de ganhadores não foi são Paulo")
