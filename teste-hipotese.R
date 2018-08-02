@@ -3,6 +3,10 @@
 # H1 = O estado que mais ganhou na MegaSena não foi São Paulo.
 # ns =0.05
 
+projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/projeto/', sep='')
+#projeto<-paste(getwd(), '...')
+data.estados<-read.csv2(paste(projeto,'clean-data-estados.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
+
 ns<- 0.05 
 
 concursoGanhadores<- count(data.estados)
@@ -11,7 +15,7 @@ proporcao<- mean(data.estados$UF=="SP")
 
 #transformar factor em numeric
 estadosH <- data.estados
-estadosH$UF<- as.character(V$UF)
+estadosH$UF<-as.character(estadosH$UF)
 estadosH$UF[estadosH$UF=="SP"]<- 1
 estadosH$UF[estadosH$UF!="1"]<-0
 estadosH$UF <- as.numeric(estadosH$UF)
