@@ -16,6 +16,7 @@ projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/pro
 data<-read.csv2(paste(projeto,'clean-data.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 data.dezenas<-read.csv2(paste(projeto,'clean-data-dezenas.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 data.estados<-read.csv2(paste(projeto,'clean-data-estados.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
+data.regioes<-read.csv2(paste(projeto,'clean-data-regioes.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 
 View(data)
 par(mfrow=c(1,1))
@@ -25,9 +26,23 @@ col.yellow<-'#F7CE2D'
 col.blue<-'#0073B7'
 gradient_green<-colorRampPalette(c(col.green, col.yellow))
 
-#ocorrencia das dezenas
+#ocorrencia da dezenas
 ocorrencia<-data.dezenas$Dezena
-hist(ocorrencia, main='Histograma', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F)
+hist(ocorrencia, main='Histograma das dezenas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
+axis(side=1, at=1:60,
+     labels=1:60,
+     cex.axis=0.8)
+ocorrencia<-density(ocorrencia)
+lines(ocorrencia)
+
+#ocorrencia das dezenas de concursos premiados
+ocorrencia<-select(filter(data, data$Acumulado==F), Concurso)
+ocorrencia<-merge(data.dezenas, ocorrencia, by='Concurso')
+ocorrencia<-ocorrencia$Dezena
+hist(ocorrencia, main='Histograma das dezenas premiadas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
+axis(side=1, at=1:60,
+     labels=1:60,
+     cex.axis=0.8)
 ocorrencia<-density(ocorrencia)
 lines(ocorrencia)
 
@@ -35,12 +50,11 @@ lines(ocorrencia)
 premioAno<-select(data, Ano_Sorteio, Rateio_Sena, Ganhadores_Sena)
 premioAno<-mutate(premioAno, Premio_Ano=(Ganhadores_Sena*Rateio_Sena))
 premioAno<-select(premioAno, Ano_Sorteio, Premio_Ano)
-premioAno<-filter(premioAno, Ano_Sorteio<2018) #o ano atual ainda esta sendo computado
 premioAno<-group_by(premioAno, Premio_Ano, Ano_Sorteio)
 premioAno<-aggregate(Premio_Ano ~ Ano_Sorteio, FUN=sum, data=premioAno)
 premioAno$Premio_Ano<-round(premioAno$Premio_Ano/1000000) #por milhoes de reais
 plot(x=premioAno$Ano_Sorteio, y=premioAno$Premio_Ano, type='o', pch='$', col=col.green, 
-     main='Premio por ano', xlab='Ano', ylab='Premio (Mi)', axes=F)
+     main='Prêmio por ano', xlab='Ano', ylab='Prêmio (Mi)', axes=F)
 axis(side=1, at=premioAno$Ano_Sorteio,
      labels=premioAno$Ano_Sorteio,
      cex.axis=0.7)
@@ -50,7 +64,6 @@ axis(side=2, at=premioAno$Premio_Ano,
 
 #ganhadores por ano
 ganhadoresAno<-select(data, Ano_Sorteio, Ganhadores_Sena)
-ganhadoresAno<-filter(ganhadoresAno, Ano_Sorteio<2018) #o ano atual ainda esta sendo computado
 ganhadoresAno<-group_by(ganhadoresAno, Ganhadores_Sena, Ano_Sorteio)
 ganhadoresAno<-aggregate(Ganhadores_Sena ~ Ano_Sorteio, FUN=sum, data=ganhadoresAno)
 plot(x=ganhadoresAno$Ano_Sorteio, y=ganhadoresAno$Ganhadores_Sena, type='o', pch='$', col=col.blue, 
@@ -99,4 +112,6 @@ shape.estados$valor<-estados$Concurso
 shape.estados<-shape.estados[order(shape.estados$valor, decreasing = TRUE),]
 spplot(shape.estados, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por Estado', col='#004E2A')
 
+shape.estados$regiao_id
+shape.estados$sigla
 

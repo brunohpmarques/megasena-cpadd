@@ -5,8 +5,8 @@ library(tidyr)
 library(dplyr)
 options(digits=15)
 
-#data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
-data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
+data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
+#data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
 
 View(data)
 
@@ -55,7 +55,10 @@ data$Arrecadacao_Total<- as.numeric(data$Arrecadacao_Total)/100
 #altera valores de SIM e NAO para TRUE e FALSE
 levels(data$Acumulado)<- c(FALSE, TRUE)
 data$Acumulado<- as.logical(data$Acumulado)
-#fim altera valores de SIM e NAO para TRUE e 
+#fim altera valores de SIM e NAO para TRUE e FALSE
+
+#Limita concurso até o final de 2017
+data<-filter(data, Ano_Sorteio<2018)
 
 #cria dataset organizada para as dezenas
 g<-select(data,Concurso,X1_Dezena,X2_Dezena,X3_Dezena,X4_Dezena,X5_Dezena,X6_Dezena)
@@ -64,7 +67,7 @@ data.dezenas$Ordem_Sorteio<- factor(data.dezenas$Ordem_Sorteio)
 levels(data.dezenas$Ordem_Sorteio)<-c(1,2,3,4,5,6)
 View(data.dezenas)
 
-data<- select(data,-X1_Dezena,-X2_Dezena,-X3_Dezena,-X4_Dezena,-X5_Dezena,-X6_Dezena)
+data<-select(data,-X1_Dezena,-X2_Dezena,-X3_Dezena,-X4_Dezena,-X5_Dezena,-X6_Dezena)
 View(data)
 #fim cria dataset organizada para as dezenas
 
@@ -75,26 +78,24 @@ View(g)
 str(g)
 g$UF<-as.character(g$UF)
 separate(g$UF, sep=',', into='UF')
-g<- g %>%
+data.estados<-g %>%
   transform(UF = strsplit(UF, ",")) %>%
   unnest(UF)
 #fim cria dataset organizado para os estados ganhadores
 
-#TODO criar dataset organizado para as regioes ganhadores
-
-Regioes<-c(rep("Norte",7), rep("Nordeste",9), rep("CentroOeste",4), rep("Sul",3), rep("Sudeste",4))
+#Criar dataset organizado para as regioes
+Regioes<-c(rep("NO",7), rep("NE",9), rep("CO",4), rep("S",3), rep("SE",4))
 UF<-c("AM","RR","AP","PA","TO","RO","AC","AL","BA","CE","MA","PB","PE","PI","RN","SE",
            "DF","GO","MT","MS","PR","SC","RS","MG","RJ","SP","ES")
-data.regioes<- data.frame(Regioes, UF)
-
- 
-#
-#fim criar dataset organizado para as regioes ganhadores
+Regiao_id<-c(rep(3,7), rep(4,9), rep(5,4), rep(1,3), rep(2,4))
+data.regioes<-data.frame(Regioes, Regiao_id, UF)
+#fim criar dataset organizado para as regioes
 
 #grava no arquivo
 getwd()
 write.table(data, 'clean-data.csv', sep=';', row.names=FALSE)
 write.table(data.dezenas, 'clean-data-dezenas.csv', sep=';', row.names=FALSE)
-write.table(g, 'clean-data-estados.csv', sep=';', row.names=FALSE)
+write.table(data.estados, 'clean-data-estados.csv', sep=';', row.names=FALSE)
+write.table(data.regioes, 'clean-data-regioes.csv', sep=';', row.names=FALSE)
 
 
