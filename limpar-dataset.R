@@ -8,7 +8,7 @@ options(digits=15)
 data<-read.csv2('C:\\Users\\Bruno\\Documents\\UFRPE\\Computação para Análise de Dados\\Códigos\\projeto\\MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T)
 #data<-read.csv2('/Users/air/Documents/cpadd/MEGASENA-03-07-2018.txt', sep='\t', dec=',', header=T, na.strings='', strip.white=T, stringsAsFactors = F)
 
-View(data)
+View(head(data))
 
 #remover linhas NAs
 posicaoNA<- which(is.na(data))
@@ -16,11 +16,11 @@ data<-data[-posicaoNA,]
 nrow(data)
 #fim remover linhas NAs
 
-#converte data formatada para date
+#converte data formatada para variaveis separadas
 data<- data %>% separate(col='Data_Sorteio', into=c('Dia_Sorteio','Mes_Sorteio','Ano_Sorteio', sep='/'))
 data<-data[,-5]
 #data$Data_Sorteio<- as.Date(data$Data_Sorteio, format='%d/%m/%Y')
-#fim converte data formatada para date
+#fim converte data formatada para variaveis separadas
 
 #converte moeda formatada para decimal
 data$Rateio_Sena<- gsub('[.]', '', data$Rateio_Sena)
@@ -90,6 +90,11 @@ UF<-c("AM","RR","AP","PA","TO","RO","AC","AL","BA","CE","MA","PB","PE","PI","RN"
 Regiao_id<-c(rep(3,7), rep(4,9), rep(5,4), rep(1,3), rep(2,4))
 data.regioes<-data.frame(Regioes, Regiao_id, UF)
 #fim criar dataset organizado para as regioes
+
+View(head(data))
+View(head(data.dezenas))
+View(head(data.estados))
+View(head(data.regioes))
 
 #grava no arquivo
 getwd()
