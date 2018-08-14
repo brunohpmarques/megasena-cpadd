@@ -26,26 +26,6 @@ col.yellow<-'#F7CE2D'
 col.blue<-'#0073B7'
 gradient_green<-colorRampPalette(c(col.green, col.yellow))
 
-#ocorrencia da dezenas
-ocorrencia<-data.dezenas$Dezena
-hist(ocorrencia, main='Histograma das dezenas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
-axis(side=1, at=1:60,
-     labels=1:60,
-     cex.axis=0.8)
-ocorrencia<-density(ocorrencia)
-lines(ocorrencia)
-
-#ocorrencia das dezenas de concursos premiados
-ocorrencia<-select(filter(data, data$Acumulado==F), Concurso)
-ocorrencia<-merge(data.dezenas, ocorrencia, by='Concurso')
-ocorrencia<-ocorrencia$Dezena
-hist(ocorrencia, main='Histograma das dezenas premiadas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
-axis(side=1, at=1:60,
-     labels=1:60,
-     cex.axis=0.8)
-ocorrencia<-density(ocorrencia)
-lines(ocorrencia)
-
 #premio por ano
 premioAno<-select(data, Ano_Sorteio, Rateio_Sena, Ganhadores_Sena)
 premioAno<-mutate(premioAno, Premio_Ano=(Ganhadores_Sena*Rateio_Sena))
@@ -75,6 +55,40 @@ axis(side=2, at=ganhadoresAno$Ganhadores_Sena,
      labels=ganhadoresAno$Ganhadores_Sena,
      cex.axis=0.7)
 
+#ocorrencia da dezenas
+ocorrencia<-data.dezenas$Dezena
+hist(ocorrencia, main='Histograma das dezenas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
+axis(side=1, at=1:60,
+     labels=1:60,
+     cex.axis=0.8)
+ocorrencia<-density(ocorrencia)
+lines(ocorrencia)
+
+#dezenas mais sorteadas
+ocorrencia<-select(data.dezenas, Dezena)
+ocorrencia<-group_by(ocorrencia, Dezena) %>% mutate(count = n())
+ocorrencia<-unique(ocorrencia) %>% arrange(count)
+View(ocorrencia)
+
+#ocorrencia das dezenas de concursos premiados
+ocorrencia<-select(filter(data, data$Acumulado==F), Concurso)
+ocorrencia<-merge(data.dezenas, ocorrencia, by='Concurso')
+ocorrencia<-ocorrencia$Dezena
+hist(ocorrencia, main='Histograma das dezenas premiadas', ylab='Ocorrencia', xlab='Dezena', col=col.green, breaks=3*90, freq=F, xaxt='n')
+axis(side=1, at=1:60,
+     labels=1:60,
+     cex.axis=0.8)
+ocorrencia<-density(ocorrencia)
+lines(ocorrencia)
+
+#dezenas mais sorteadas em concursos ganhadores
+ocorrencia<-select(filter(data, data$Acumulado==F), Concurso)
+ocorrencia<-merge(data.dezenas, ocorrencia, by='Concurso')
+ocorrencia<-select(ocorrencia, Dezena)
+ocorrencia<-group_by(ocorrencia, Dezena) %>% mutate(count = n())
+ocorrencia<-unique(ocorrencia) %>% arrange(count)
+View(ocorrencia)
+
 #ganhadores por quantidade de concursos
 ganhadoresConcurso<-data$Acumulado
 classes<-c('Ganhadores','Acumulado')
@@ -82,6 +96,10 @@ x<-c(sum(!ganhadoresConcurso[TRUE]), sum(ganhadoresConcurso[TRUE]))
 ptc<-paste(round(x/sum(x)*100), '%', sep='')
 pie(x, ptc, main='Ganhadores x Acumulado', col=c(col.green, col.yellow))
 legend(x='bottomright', legend=classes, fill=c(col.green, col.yellow))
+
+#numero de ganhadores
+ganhadoresConcurso<-filter(data, Acumulado==FALSE) %>% select(Ganhadores_Sena)
+ganhadoresConcurso<-sum(ganhadoresConcurso$Ganhadores_Sena)
 
 #ganhadores por estado
 estados<-data.estados
@@ -110,8 +128,36 @@ estados<-estados[order(estados$UF),]
 shape.estados<-shape.estados[order(shape.estados$sigla),]
 shape.estados$valor<-estados$Concurso
 shape.estados<-shape.estados[order(shape.estados$valor, decreasing = TRUE),]
-spplot(shape.estados, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por Estado', col='#004E2A')
+spplot(shape.estados, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por estado', col='#004E2A')
 
-shape.estados$regiao_id
-shape.estados$sigla
+#ganhadores por regiao
+regioes<-data.regioes
+regioes<-merge(data.estados, regioes, by='UF')
+regioes<-aggregate(Concurso ~ Regioes, FUN=length, regioes)
+
+#pizza dos mais ganhadores - agrupar os menores 'outros'
+regioes<-regioes[order(regioes$Concurso, decreasing = TRUE), ]
+regPie<-data.frame(regioes=as.character(regioes$Regioes), qnt=regioes$Concurso)
+pct<-round(regPie$qnt/sum(regPie$qnt)*100)
+pct<-paste(pct, '%)', sep='')
+pct<-paste('(', pct, sep='')
+labels<-paste(regPie$qnt, pct)
+pie(regPie$qnt, labels, main="Ganhadores por região", col=gradient_green(7))
+legend("bottomright",
+       legend=regPie$regioes,
+       fill=gradient_green(7))
+
+par(mar=c(1,1,1,1))
+map("world","Brazil")
+shape.regioes<-readOGR(paste(projeto, "shapes/estados_2010.shp", sep=''))
+regioes<-data.regioes
+regioes<-merge(data.estados, regioes, by='UF')
+regioes<-aggregate(Concurso ~ Regioes, FUN=length, regioes)
+regioes<-merge(select(data.regioes, Regioes, Regiao_id), regioes, by='Regioes')
+regioes<-regioes[order(regioes$Regiao_id),]
+
+shape.regioes<-shape.regioes[order(shape.regioes$regiao_id),]
+shape.regioes$valor<-regioes$Concurso
+shape.regioes<-shape.regioes[order(shape.regioes$valor, decreasing = TRUE),]
+spplot(shape.regioes, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por estado', col='#004E2A')
 
