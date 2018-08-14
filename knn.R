@@ -17,7 +17,6 @@ data.knn<-merge(data.estados, data.knn, by='Concurso', all=TRUE)
 
 levels(data.knn$UF)<-c(levels(data.knn$UF), 'NENHUM')
 data.knn$UF[is.na(data.knn$UF)]<-'NENHUM'
-
 train<-select(data.knn, -Concurso)
 
 #mes 1 pra PE e 3 pra SP e PR
