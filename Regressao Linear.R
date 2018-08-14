@@ -185,3 +185,97 @@ predict(r.Acumulado_Mega_da_Virada, previsao)
 #Em 2001 o valor Acumulado da Mega da Virada está estimado em: 42224816.6541231
 #Em 2020 o valor Acumulado da Mega da Virada está estimado em: 42728663.7842579
 #Em 2068 o valor Acumulado da Mega da Virada está estimado em: 44001540.7445984 
+
+#------- Estimativa do o numero de ganhadores pra algum concurso futuro ---------
+
+View(data)
+r.NumeroGanhadores<- lm(Ganhadores_Sena~Concurso, data=data)
+summary(r.NumeroGanhadores)
+# A equação da linha de regressão estimada pode ser escrita 
+# da seguinte forma: Concurso = -964.2 +  0.0054*Ganhadores_Quadra - 0.088*Ganhadores_Quina + 18.87*Ganhadores_Sena
+
+
+# grafico da Regressão
+plot (Ganhadores_Sena~Concurso, pch=16 ,data =data)
+abline(r.NumeroGanhadores,col="red")
+
+#avaliar Modelo
+
+#Estamos interessados em saber se X (Concurso) pode ou não ser utilizada
+#para predizer Y (Acumulado_Mega_da_Virada). Se o valor de p associado ao coeficiente for igual ou
+#menor que o nível de significância adotado, então aceitamos que existe uma
+#relação estatísticas entre as variáveis. 
+
+summary(r.NumeroGanhadores)
+
+#Como Concurso Pr(>|t|) = 0.0045 < 0.05 então eles tem relação estatísticas
+# R =  0.0065 o modelo de regressão explicou grande parte da variabilidade no resultado.
+
+#Analise dos Pressuposto 
+# normalidade
+
+normalidade<-shapiro.test(residuals(r.NumeroGanhadores))
+
+if(normalidade$p.value<=0.05){
+  print("Hipotese Nula Rejeitada:os resíduos não são provenientes de uma distribuição Normal.")
+}else{
+  print("Hipotese Nula Aceita: os resíduos são provenientes de uma distribuição Normal.")
+}
+
+# Variavel Homogenea
+plot(r.NumeroGanhadores,1)
+
+previsao<-data.frame(Concurso=c(1,529,2068))
+predict(r.NumeroGanhadores, previsao)
+
+#Previsão:
+#Em 2001 o valor Acumulado da Mega da Virada está estimado em: 42224816.6541231
+#Em 2020 o valor Acumulado da Mega da Virada está estimado em: 42728663.7842579
+#Em 2068 o valor Acumulado da Mega da Virada está estimado em: 44001540.7445984 
+
+#------- Estimar o quando o estado de SP ele vai ganhar-----
+Estados.Numericos
+r.GanhadoresSP<- lm(UF~Concurso, data=Estados.Numericos)
+r.GanhadoresSP<- lm(Concurso~UF, data=Estados.Numericos)
+summary(r.GanhadoresSP)
+# A equação da linha de regressão estimada pode ser escrita 
+# da seguinte forma: Concurso = -964.2 +  0.0054*Ganhadores_Quadra - 0.088*Ganhadores_Quina + 18.87*Ganhadores_Sena
+
+
+# grafico da Regressão
+plot (UF~Concurso, pch=16 ,data =Estados.Numericos)
+abline(r.GanhadoresSP,col="red")
+
+#avaliar Modelo
+
+#Estamos interessados em saber se X (Concurso) pode ou não ser utilizada
+#para predizer Y (Acumulado_Mega_da_Virada). Se o valor de p associado ao coeficiente for igual ou
+#menor que o nível de significância adotado, então aceitamos que existe uma
+#relação estatísticas entre as variáveis. 
+
+summary(r.GanhadoresSP)
+
+#Como Concurso Pr(>|t|) = 0.0045 < 0.05 então eles tem relação estatísticas
+# R =  0.0065 o modelo de regressão explicou grande parte da variabilidade no resultado.
+
+#Analise dos Pressuposto 
+# normalidade
+
+normalidade<-shapiro.test(residuals(r.GanhadoresSP))
+
+if(normalidade$p.value<=0.05){
+  print("Hipotese Nula Rejeitada:os resíduos não são provenientes de uma distribuição Normal.")
+}else{
+  print("Hipotese Nula Aceita: os resíduos são provenientes de uma distribuição Normal.")
+}
+
+# Variavel Homogenea
+plot(r.GanhadoresSP,1)
+
+previsao<-data.frame(UF=c(25))
+predict(r.GanhadoresSP, previsao, index=1:2)
+View(Estados.Numericos)
+#Previsão:
+#Em 2001 o valor Acumulado da Mega da Virada está estimado em: 42224816.6541231
+#Em 2020 o valor Acumulado da Mega da Virada está estimado em: 42728663.7842579
+#Em 2068 o valor Acumulado da Mega da Virada está estimado em: 44001540.7445984 
