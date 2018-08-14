@@ -1,8 +1,3 @@
-projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/projeto/', sep='')
-
-data<-read.csv2(paste(projeto,'clean-data.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
-data.dezenas<-read.csv2(paste(projeto,'clean-data-dezenas.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
-data.estados<-read.csv2(paste(projeto,'clean-data-estados.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 
 #transformar os estados em números para poder fazer o teste de regressão linear
 Estados.Numericos<-data.estados
@@ -20,9 +15,9 @@ summary(r.estadosGanhadores)
 # da seguinte forma: UF = 17.37 -0.0004*Concurso
 
 # grafico da Regressão
-plot (UF ~ Concurso, pch=16 ,data =Estados.Numericos, main='Dispersão Concurso x UF', cex.axis=0.7)
+plot (UF ~ Concurso, pch=16 ,data =Estados.Numericos)
 abline(r.estadosGanhadores,col="red")
-
+?pch
 #avaliar Modelo
 
 #Estamos interessados em saber se X (Concurso) pode ou não ser utilizada
@@ -49,22 +44,20 @@ if(normalidade$p.value<=0.05){
 # Variavel Homogenea
 plot(r.estadosGanhadores,1)
 
-previsao<-data.frame(Concurso=c(2001,2003,2010))
+previsao<-data.frame(Concurso=c(2001,2030,2062))
 predict(r.estadosGanhadores, previsao)
 
 #------- Estimativa de Premios ---------
 
 View(data)
-dataEstimativa<-data
-dataEstimativa$Estimativa_Premio<-round(dataEstimativa$Estimativa_Premio/1000000) #por milhoes de reais
-r.EstimativaPremio<- lm(Estimativa_Premio~Concurso, data=dataEstimativa)
+r.EstimativaPremio<- lm(Estimativa_Premio~Concurso, data=data)
 summary(r.EstimativaPremio)
 
 # A equação da linha de regressão estimada pode ser escrita 
 # da seguinte forma: Estimativa_Premio = -6719279.04 + 18574.99*Concurso
 
 # grafico da Regressão
-plot (Estimativa_Premio ~ Concurso, pch=16 ,data=dataEstimativa, main='Dispersão Concurso x Estimativa', ylab='Estimativa de Prêmio (Mi)', cex.axis=0.7)
+plot (Estimativa_Premio ~ Concurso, pch=16 ,data =data)
 abline(r.EstimativaPremio,col="red")
 
 #avaliar Modelo
@@ -90,7 +83,7 @@ if(normalidade$p.value<=0.05){
 }
 
 # Variavel Homogenea
-plot(r.EstimativaPremio,1)
+plot(RegressaoEstimativaPremio,1)
 
 previsao<-data.frame(Concurso=c(2001,2020,2068))
 predict(r.EstimativaPremio, previsao)
@@ -236,10 +229,7 @@ previsao<-data.frame(Concurso=c(1,529,2068))
 predict(r.NumeroGanhadores, previsao)
 
 #Previsão:
-#Em 2001 o valor Acumulado da Mega da Virada está estimado em: 42224816.6541231
-#Em 2020 o valor Acumulado da Mega da Virada está estimado em: 42728663.7842579
-#Em 2068 o valor Acumulado da Mega da Virada está estimado em: 44001540.7445984 
-
+#COLOCAR AS PREVISÕES
 #------- Estimar o quando o estado de SP ele vai ganhar-----
 Estados.Numericos
 r.GanhadoresSP<- lm(UF~Concurso, data=Estados.Numericos)
@@ -283,6 +273,4 @@ previsao<-data.frame(UF=c(25))
 predict(r.GanhadoresSP, previsao, index=1:2)
 View(Estados.Numericos)
 #Previsão:
-#Em 2001 o valor Acumulado da Mega da Virada está estimado em: 42224816.6541231
-#Em 2020 o valor Acumulado da Mega da Virada está estimado em: 42728663.7842579
-#Em 2068 o valor Acumulado da Mega da Virada está estimado em: 44001540.7445984 
+#COLOCAR AS PREVISÕES
