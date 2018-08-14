@@ -1,3 +1,8 @@
+projeto<-paste(getwd(), '/UFRPE/Computação para Análise de Dados/Códigos/projeto/', sep='')
+
+data<-read.csv2(paste(projeto,'clean-data.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
+data.dezenas<-read.csv2(paste(projeto,'clean-data-dezenas.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
+data.estados<-read.csv2(paste(projeto,'clean-data-estados.csv', sep=''), sep=';', dec='.', header=T, na.strings='', strip.white=T)
 
 #transformar os estados em números para poder fazer o teste de regressão linear
 Estados.Numericos<-data.estados
@@ -15,7 +20,7 @@ summary(r.estadosGanhadores)
 # da seguinte forma: UF = 17.37 -0.0004*Concurso
 
 # grafico da Regressão
-plot (UF ~ Concurso, pch=16 ,data =Estados.Numericos)
+plot (UF ~ Concurso, pch=16 ,data =Estados.Numericos, main='Dispersão Concurso x UF', cex.axis=0.7)
 abline(r.estadosGanhadores,col="red")
 
 #avaliar Modelo
@@ -50,14 +55,16 @@ predict(r.estadosGanhadores, previsao)
 #------- Estimativa de Premios ---------
 
 View(data)
-r.EstimativaPremio<- lm(Estimativa_Premio~Concurso, data=data)
+dataEstimativa<-data
+dataEstimativa$Estimativa_Premio<-round(dataEstimativa$Estimativa_Premio/1000000) #por milhoes de reais
+r.EstimativaPremio<- lm(Estimativa_Premio~Concurso, data=dataEstimativa)
 summary(r.EstimativaPremio)
 
 # A equação da linha de regressão estimada pode ser escrita 
 # da seguinte forma: Estimativa_Premio = -6719279.04 + 18574.99*Concurso
 
 # grafico da Regressão
-plot (Estimativa_Premio ~ Concurso, pch=16 ,data =data)
+plot (Estimativa_Premio ~ Concurso, pch=16 ,data=dataEstimativa, main='Dispersão Concurso x Estimativa', ylab='Estimativa de Prêmio (Mi)', cex.axis=0.7)
 abline(r.EstimativaPremio,col="red")
 
 #avaliar Modelo
@@ -83,7 +90,7 @@ if(normalidade$p.value<=0.05){
 }
 
 # Variavel Homogenea
-plot(RegressaoEstimativaPremio,1)
+plot(r.EstimativaPremio,1)
 
 previsao<-data.frame(Concurso=c(2001,2020,2068))
 predict(r.EstimativaPremio, previsao)
