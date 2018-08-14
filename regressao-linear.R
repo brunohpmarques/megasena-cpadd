@@ -64,8 +64,8 @@ summary(r.EstimativaPremio)
 # da seguinte forma: Estimativa_Premio = -6719279.04 + 18574.99*Concurso
 
 # grafico da Regressão
-plot (Estimativa_Premio ~ Concurso, pch=16 ,data=dataEstimativa, main='Dispersão Concurso x Estimativa', ylab='Estimativa de Prêmio (Mi)', cex.axis=0.7)
-abline(r.EstimativaPremio,col="red")
+plot (Estimativa_Premio ~ Concurso, pch=16 ,data=dataEstimativa, main='Dispersão Concurso x Estimativa de prêmio', ylab='Estimativa de Prêmio (Mi)', cex.axis=0.7)
+abline(r.EstimativaPremio, col="red")
 
 #avaliar Modelo
 
@@ -103,16 +103,17 @@ predict(r.EstimativaPremio, previsao)
 #------- Estimativa de Valor Acumulado ---------
 
 View(data)
-r.EstimativaValorAcumulado<- lm(Valor_Acumulado~Concurso, data=data)
+dataEstimativa<-data
+dataEstimativa$Valor_Acumulado<-round(dataEstimativa$Valor_Acumulado/1000000) #por milhoes de reais
+r.EstimativaValorAcumulado<- lm(Valor_Acumulado~Concurso, data=dataEstimativa)
 summary(r.EstimativaValorAcumulado)
 
 # A equação da linha de regressão estimada pode ser escrita 
 # da seguinte forma: Valor_Acumulado = 3837015.91 + 8304.91*Concurso
 
 # grafico da Regressão
-
-plot (Valor_Acumulado ~ Concurso, pch=16 ,data =data)
-abline(r.EstimativaValorAcumulado,col="red")
+plot (Valor_Acumulado ~ Concurso, pch=16, data=dataEstimativa, main='Dispersão Concurso x Acumulado', ylab='Acumulado (Mi)', cex.axis=0.7)
+abline(r.EstimativaValorAcumulado, col="red")
 
 #avaliar Modelo
 
@@ -149,15 +150,16 @@ predict(r.EstimativaValorAcumulado, previsao)
 
 #------- Estimativa de Valor Acumulado MegaVirada ---------
 
-
-r.Acumulado_Mega_da_Virada<- lm(Acumulado_Mega_da_Virada~Concurso, data=data)
+dataEstimativa<-data
+dataEstimativa$Acumulado_Mega_da_Virada<-round(dataEstimativa$Acumulado_Mega_da_Virada/1000000) #por milhoes de reais
+r.Acumulado_Mega_da_Virada<- lm(Acumulado_Mega_da_Virada~Concurso, data=dataEstimativa)
 summary(r.Acumulado_Mega_da_Virada)
 # A equação da linha de regressão estimada pode ser escrita 
 # da seguinte forma: Acumulado_Mega_da_Virada = -10838241.63 +  26518.27*Concurso
 
 # grafico da Regressão
-plot (Acumulado_Mega_da_Virada ~ Concurso, pch=16 ,data =data)
-abline(r.Acumulado_Mega_da_Virada,col="red")
+plot (Acumulado_Mega_da_Virada ~ Concurso, pch=16, data=dataEstimativa, main='Dispersão Concurso x Acumulado Mega da Virada', ylab='Acumulado Mega da Virada (Mi)', cex.axis=0.7)
+abline(r.Acumulado_Mega_da_Virada, col="red")
 
 #avaliar Modelo
 
@@ -203,8 +205,8 @@ summary(r.NumeroGanhadores)
 
 
 # grafico da Regressão
-plot (Ganhadores_Sena~Concurso, pch=16 ,data =data)
-abline(r.NumeroGanhadores,col="red")
+plot (Ganhadores_Sena~Concurso, pch=16, data=data, main='Dispersão Concurso x Ganhadores', ylab='Ganhadores', cex.axis=0.7)
+abline(r.NumeroGanhadores, col="red")
 
 #avaliar Modelo
 
