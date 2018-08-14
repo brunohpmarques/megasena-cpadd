@@ -159,5 +159,5 @@ regioes<-regioes[order(regioes$Regiao_id),]
 shape.regioes<-shape.regioes[order(shape.regioes$regiao_id),]
 shape.regioes$valor<-regioes$Concurso
 shape.regioes<-shape.regioes[order(shape.regioes$valor, decreasing = TRUE),]
-spplot(shape.regioes, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por estado', col='#004E2A')
+spplot(shape.regioes, 'valor', col.regions=gradient_green(27), par.settings=list(axis.line=list(col= "transparent")), main='Ganhadores por região', col='#004E2A')
 
